@@ -6,12 +6,14 @@
 #include<set>
 #include"thm.h"
 
+using std::cin, std::cout, std::endl;
+
 int main()
 {
     freopen("test.in", "r", stdin);
     freopen("test.out", "w", stdout);
     theorem a;
-    std::cin >> a;
-    std::cout << a;
+    cin >> a;
+    cout << a << endl << a.prove();
     return 0;
 }

@@ -54,8 +54,174 @@ private:
             op.pop_back();
         }
     }
+    void initSuf()
+    {
+        // insert P|!P into prefix
+        // after swap, it will be suffix
+        Node *P = new Node('P', nullptr, nullptr);
+        pre.push_back(P); pre.push_back(P);
+        Node *tp = pre.back(); pre.pop_back();
+        Node *tmp = new Node('!', 0, tp);
+        pre.push_back(tmp);
+        Node *tp1 = pre.back(); pre.pop_back();
+        Node *tp2 = pre.back(); pre.pop_back();
+        tmp = new Node('|', tp2, tp1);
+        pre.push_back(tmp);
+    }
+    void init()
+    {
+        for(auto& it : suf_expression)
+        {
+            if(isOp(it))
+            {
+                if(&it == &suf_expression.back() && it == '>')
+                {
+                    Node *tp = pre.back();
+                    pre.pop_back();
+                    suf.push_back(tp);
+                    break;
+                } // split logical expression
+                if(isRightOp(it))
+                {
+                    Node *tp = pre.back();
+                    pre.pop_back();
+                    Node *tmp = new Node(it, 0, tp);
+                    pre.push_back(tmp);
+                }
+                else
+                {
+                    Node *tp1 = pre.back();
+                    pre.pop_back();
+                    Node *tp2 = pre.back();
+                    pre.pop_back();
+                    Node *tmp = new Node(it, tp2, tp1);
+                    pre.push_back(tmp);
+                }
+            }
+            else
+            {
+                Node *tmp = new Node(it, nullptr, nullptr);
+                pre.push_back(tmp);
+            }
+        }
+        if(suf.empty())
+        {
+            std::swap(pre, suf);
+            initSuf();
+        }
+    }
+    bool check(std::list<Node*> q)
+    {
+        for(auto it : q) if(isOp(it->c)) return 0;
+        return 1;
+    }
+    bool prove_p(std::list<Node*> ql, std::list<Node*> qr)
+    {
+        // pop_back push_front
+        if(!check(ql))
+        {
+            Node *tp = ql.back();
+            if(isOp(tp->c))
+            {
+                auto tql = ql, tqr = qr;
+                auto tql2 = ql, tqr2 = qr;
+                tql.pop_back(); tql2.pop_back();
+                if(isRightOp(tp->c))
+                {
+                    tqr.push_front(tp->rs);
+                    return prove_p(tql, tqr);
+                }
+                else if(tp->c == '&')
+                {
+                    tql.push_front(tp->ls);
+                    tql.push_front(tp->rs);
+                    return prove_p(tql, tqr);
+                }
+                else if(tp->c == '|')
+                {
+                    tql.push_front(tp->ls);
+                    tql2.push_front(tp->rs);
+                    return prove_p(tql, tqr) && prove_p(tql2, tqr);
+                }
+                else if(tp->c == '>')
+                {
+                    tql2.push_front(tp->rs);
+                    tqr2.push_front(tp->ls);
+                    return prove_p(tql2, tqr) && prove_p(tql, tqr2);
+                }
+                else if(tp->c == '=')
+                {
+                    tql2.push_front(tp->ls);
+                    tql2.push_front(tp->rs);
+                    tqr2.push_front(tp->ls);
+                    tqr2.push_front(tp->rs);
+                    return prove_p(tql2, tqr) && prove_p(tql, tqr2);
+                }
+            }
+            else
+            {
+                auto tql = ql, tqr = qr;
+                tql.pop_back();
+                tql.push_front(tp);
+                return prove_p(tql, tqr);
+            }
+        }
+        if(!check(qr))
+        {
+            Node *tp = qr.back();
+            if(isOp(tp->c))
+            {
+                auto tql = ql, tqr = qr;
+                auto tql2 = ql, tqr2 = qr;
+                tqr.pop_back(); tqr2.pop_back();
+                if(isRightOp(tp->c))
+                {
+                    tql.push_front(tp->rs);
+                    return prove_p(tql, tqr);
+                }
+                else if(tp->c == '&')
+                {
+                    tqr.push_front(tp->ls);
+                    tqr2.push_front(tp->rs);
+                    return prove_p(tql, tqr) && prove_p(tql, tqr2);
+                }
+                else if(tp->c == '|')
+                {
+                    tqr.push_front(tp->ls);
+                    tqr.push_front(tp->rs);
+                    return prove_p(tql, tqr);
+                }
+                else if(tp->c == '>')
+                {
+                    tql.push_front(tp->ls);
+                    tqr.push_front(tp->rs);
+                    return prove_p(tql, tqr);
+                }
+                else if(tp->c == '=')
+                {
+                    tql.push_front(tp->ls);
+                    tqr.push_front(tp->rs);
+                    tql2.push_front(tp->rs);
+                    tqr2.push_front(tp->ls);
+                    return prove_p(tql, tqr) && prove_p(tql2, tqr2);
+                }
+            }
+            else
+            {
+                auto tql = ql, tqr = qr;
+                tqr.pop_back();
+                tqr.push_front(tp);
+                return prove_p(tql, tqr);
+            }
+        }
+        std::set<char> st;
+        for(auto it : ql) st.insert(it->c);
+        for(auto it : qr) if(st.find(it->c) != st.end()) return 1;
+        return 0;
+    }
 public:
     theorem();
+    bool prove();
     friend std::istream & operator>>(std::istream & is, theorem & t);
     friend std::ostream & operator<<(std::ostream & os, theorem & t);
 };

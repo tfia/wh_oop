@@ -15,11 +15,17 @@ theorem::theorem()
     opp['!'] = 4; opp['&'] = 3; opp['|'] = 2; opp['>'] = 1; opp['='] = 0;
 }
 
+bool theorem::prove()
+{
+    return prove_p(pre, suf);
+}
+
 std::istream & operator>>(std::istream & is, theorem & t)
 {
-    is >> t.ori_expression;
+    std::getline(is, t.ori_expression);
     t.toInf();
     t.toSuf();
+    t.init();
     return is;
 }
 
