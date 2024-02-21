@@ -221,6 +221,10 @@ private:
     }
 public:
     theorem();
+    explicit theorem(const std::string & x);
+    theorem & operator=(const std::string & x);
+    theorem & operator=(const theorem & x);
+    ~theorem();
     bool prove();
     friend std::istream & operator>>(std::istream & is, theorem & t);
     friend std::ostream & operator<<(std::ostream & os, theorem & t);
