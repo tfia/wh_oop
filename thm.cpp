@@ -18,7 +18,11 @@ theorem::theorem()
 
 theorem::theorem(const std::string & x)
 {
-    theorem();
+    OP.clear(); opp.clear();
+    OP.insert('!'); OP.insert('&'); OP.insert('|'); OP.insert('>'); OP.insert('=');
+    ROP.insert('!');
+	opp['('] = -1; opp[')'] = -1;
+    opp['!'] = 4; opp['&'] = 3; opp['|'] = 2; opp['>'] = 1; opp['='] = 0;
     ori_expression = x;
     toInf();
     toSuf();
@@ -27,7 +31,11 @@ theorem::theorem(const std::string & x)
 
 theorem & theorem::operator=(const std::string & x)
 {
-    theorem();
+    OP.clear(); opp.clear();
+    OP.insert('!'); OP.insert('&'); OP.insert('|'); OP.insert('>'); OP.insert('=');
+    ROP.insert('!');
+	opp['('] = -1; opp[')'] = -1;
+    opp['!'] = 4; opp['&'] = 3; opp['|'] = 2; opp['>'] = 1; opp['='] = 0;
     ori_expression = x;
     toInf();
     toSuf();
@@ -37,7 +45,11 @@ theorem & theorem::operator=(const std::string & x)
 
 theorem & theorem::operator=(const theorem & x)
 {
-    theorem();
+    OP.clear(); opp.clear();
+    OP.insert('!'); OP.insert('&'); OP.insert('|'); OP.insert('>'); OP.insert('=');
+    ROP.insert('!');
+	opp['('] = -1; opp[')'] = -1;
+    opp['!'] = 4; opp['&'] = 3; opp['|'] = 2; opp['>'] = 1; opp['='] = 0;
     ori_expression = x.ori_expression;
     toInf();
     toSuf();

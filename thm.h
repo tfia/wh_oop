@@ -221,7 +221,7 @@ private:
     }
 public:
     theorem();
-    explicit theorem(const std::string & x);
+    theorem(const std::string & x);
     theorem & operator=(const std::string & x);
     theorem & operator=(const theorem & x);
     ~theorem();

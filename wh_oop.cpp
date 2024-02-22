@@ -21,8 +21,7 @@ int main()
     b = theorem(s);
     cout << b << endl << b.prove() << endl << "---" << endl;
     cin >> s;
-    theorem c;
-    c = s;
+    theorem c = s;
     cout << c << endl << c.prove() << endl << "---" << endl;
     return 0;
 }
